@@ -10,7 +10,10 @@ class UserService {
   }
 
 
-  async create(email: String){
+
+
+  
+  async create(email: string){
     
 
     const userExists = await this.usersRepository.findOne({email})
