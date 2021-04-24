@@ -34,12 +34,14 @@ function call(id) {
   const params = {
     user_id: connection.user.id
   }
+
+  socket.emit("admin_user_in_support",params)
   
 
   socket.emit("admin_list_messages_by_user", params, messages => {
     const divMessages = document.getElementById(`allMessages${connection.user_id}`)
 
-    console.log(`allMessages${connection.user_id}`);
+    
 
     messages.forEach(message => {
       const createDiv = document.createElement("div")
@@ -92,15 +94,13 @@ function sendMessage(id) {
 
 socket.on("admin_receive_message", params => {
   const { message, socket_id } = params
-  console.log(socket_id)
+  
 
   const connection = connectionsUsers.find((connection) => (connection.socket_id === socket_id));
   
 
   const divMessages = document.getElementById(`allMessages${connection.user.id}`)
-  console.log(divMessages)
-  console.log(`allMessages${connection.user.id}`)
-  console.log(`allMessages${connection.user_id}`);
+  
 
 
   const createDiv = document.createElement("div")

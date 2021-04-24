@@ -75,7 +75,7 @@ document.querySelector("#send_message_button").addEventListener("click",(event) 
     email: emailUser
   }
 
-  console.log(params,emailUser)
+  
 
   socket.emit("client_send_to_admin",params)
 
