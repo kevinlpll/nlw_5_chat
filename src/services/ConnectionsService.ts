@@ -34,8 +34,16 @@ class ConnectionService {
   async findUserId(user_id: string):Promise<Connection>{
     const connection = this.connectionsRepository.findOne({user_id})
     return connection
-
   }
+
+  async findAllWithoutAdmin ():Promise<Connection[]>{
+    const connections = await this.connectionsRepository.find({
+      where: {admin_id: null },
+      relations: ["user"],
+    })
+    return connections;
+  }
+
 }
 
 export { ConnectionService }
