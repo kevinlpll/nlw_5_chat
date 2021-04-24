@@ -1,4 +1,3 @@
-import { Socket } from "socket.io"
 import { io } from "../http"
 import { ConnectionService } from "../services/ConnectionsService"
 import { MessagesService } from "../services/MessagesService"
@@ -18,6 +17,23 @@ io.on("connect", async (socket) => {
 
     callback(allMessages)
 
+  })
+
+  socket.on("admin_send_message",async (params) => {
+    const { user_id, text } = params
+    
+    await messagesService.create({
+       user_id,
+       text,
+       admin_id: socket.id
+    })
+
+    const { socket_id } = await connectionService.findByUserId(user_id)
+
+    io.to(socket_id).emit("admin_send_to_client",{
+      text,
+      socket_id: socket.id
+    })
   })
 })
 

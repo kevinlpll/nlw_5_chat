@@ -20,7 +20,8 @@ io.on("connect", (socket) => {
     
     const user =  (await userService.create(email))
 
-    const connection = await connectionService.findUserId(user.id)
+    const connection = await connectionService.findByUserId(user.id)
+    
 
     if(!connection){
       await connectionService.create({
@@ -38,10 +39,26 @@ io.on("connect", (socket) => {
     })
   
     const allMessages = await messagesService.listByUser(user.id)
-  
     socket.emit("client_list_all_messages",allMessages)
 
     
+    socket.on("client_send_to_admin",async(params) => {
+      const { text, socketAdminId} = params
+      
+      const { user_id } = await connectionService.findBySocketId(socket.id)
+
+      
+      const message = await messagesService.create({
+        text,
+        user_id
+      })
+
+      io.to(socketAdminId).emit("admin_receive_message",{
+        message,
+        socket_id
+      })
+  
+    })
 
 
 

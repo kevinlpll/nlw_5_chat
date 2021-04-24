@@ -31,7 +31,7 @@ class ConnectionService {
 
   }
 
-  async findUserId(user_id: string):Promise<Connection>{
+  async findByUserId(user_id: string):Promise<Connection>{
     const connection = this.connectionsRepository.findOne({user_id})
     return connection
   }
@@ -42,6 +42,11 @@ class ConnectionService {
       relations: ["user"],
     })
     return connections;
+  }
+
+  async findBySocketId (socket_id: string):Promise<Connection>{
+    const connection =  this.connectionsRepository.findOne({socket_id})
+    return connection
   }
 
 }

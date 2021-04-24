@@ -34,9 +34,12 @@ function call(id) {
   const params = {
     user_id: connection.user.id
   }
+  
 
   socket.emit("admin_list_messages_by_user", params, messages => {
     const divMessages = document.getElementById(`allMessages${connection.user_id}`)
+
+    console.log(`allMessages${connection.user_id}`);
 
     messages.forEach(message => {
       const createDiv = document.createElement("div")
@@ -47,16 +50,67 @@ function call(id) {
         createDiv.innerHTML = `<span>${connection.user.email} - ${message.text}</span>`
         createDiv.innerHTML += `<span class="admin_date">${dayjs(
           message.created_at)
-          .format("DD/MM/YYYY HH:mm:ss")}</span`
+          .format("DD/MM/YYYY HH:mm:ss")}</span>`
       } else {
         createDiv.className = "admin_message_admin"
         createDiv.innerHTML = `Atendente:<span>${message.text}</span>`
         createDiv.innerHTML += `<span class="admin_date">${dayjs(
           message.created_at)
           .format("DD/MM/YYYY HH:mm:ss")
-        }</span>`
+          }</span>`
       }
       divMessages.appendChild(createDiv)
     })
   })
 }
+
+
+
+function sendMessage(id) {
+  const text = document.getElementById(`send_message_${id}`)
+  const params = {
+    text: text.value,
+    user_id: id
+  }
+
+  socket.emit("admin_send_message", params)
+
+  const divMessages = document.getElementById(`allMessages${id}`)
+  const createDiv = document.createElement("div")
+
+  createDiv.className = "admin_message_admin"
+  createDiv.innerHTML = `Atendente:<span>${params.text}</span>`
+  createDiv.innerHTML += `<span class="admin_date">${dayjs()
+    .format("DD/MM/YYYY HH:mm:ss")
+    }</span>`
+
+  divMessages.appendChild(createDiv)
+
+  text.value = ""
+}
+
+
+socket.on("admin_receive_message", params => {
+  const { message, socket_id } = params
+  console.log(socket_id)
+
+  const connection = connectionsUsers.find((connection) => (connection.socket_id === socket_id));
+  
+
+  const divMessages = document.getElementById(`allMessages${connection.user.id}`)
+  console.log(divMessages)
+  console.log(`allMessages${connection.user.id}`)
+  console.log(`allMessages${connection.user_id}`);
+
+
+  const createDiv = document.createElement("div")
+  createDiv.className = "admin_message_client"
+  createDiv.innerHTML = `<span>${connection.user.email} - ${message.text}</span>`
+  createDiv.innerHTML += `<span class="admin_date">${dayjs(
+    message.created_at)
+    .format("DD/MM/YYYY HH:mm:ss")}</span>`
+
+  divMessages.appendChild(createDiv)
+
+
+})
